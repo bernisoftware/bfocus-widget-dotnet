@@ -7,7 +7,7 @@ namespace Bfocus.Widget
         public const int HostProtocol = 1;
 
         /// <summary>Versão do pacote. Tem de bater com &lt;Version&gt; do Directory.Build.props (há teste).</summary>
-        public const string PackageVersion = "0.1.0";
+        public const string PackageVersion = "0.1.1";
 
         /// <summary>Família do header <c>X-bFocus-Client</c> para .NET.</summary>
         public const string ClientFamily = "dotnet";
