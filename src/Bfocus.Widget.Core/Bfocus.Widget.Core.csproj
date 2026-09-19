@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <RootNamespace>Bfocus.Widget</RootNamespace>
+    <AssemblyName>Bfocus.Widget.Core</AssemblyName>
+    <PackageId>Bfocus.Widget.Core</PackageId>
+    <Description>Núcleo do widget bFocus para .NET: identidade, URL do embed (Host Protocol v1), launcher-state, badge, pílula de versão, push e modo navegador. Usado por Bfocus.Widget.WinForms, .Wpf e .Maui.</Description>
+    <IsTrimmable Condition="'$(TargetFramework)' == 'net8.0'">true</IsTrimmable>
+  </PropertyGroup>
+
+  <!-- netstandard2.0 (.NET Framework 4.6.2+) não traz System.Text.Json na caixa. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Text.Json" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Bfocus.Widget.Tests" />
+  </ItemGroup>
+
+</Project>

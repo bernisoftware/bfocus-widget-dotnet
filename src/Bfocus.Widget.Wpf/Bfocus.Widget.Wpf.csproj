@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- Só para o NotifyIcon da notificação na bandeja (o WPF não tem um). -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Bfocus.Widget.Wpf</RootNamespace>
+    <AssemblyName>Bfocus.Widget.Wpf</AssemblyName>
+    <PackageId>Bfocus.Widget.Wpf</PackageId>
+    <Description>Widget bFocus para WPF: chamados, chat e release notes numa WebView2, com botão flutuante com badge, pílula de versão, banner de ciência, notificação do sistema e modo navegador quando falta o runtime do WebView2.</Description>
+    <PackageTags>$(PackageTags);wpf</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3912.50" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bfocus.Widget.Core\Bfocus.Widget.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\*.cs" Link="Shared\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

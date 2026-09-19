@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    MAUI 10: o SDK do .NET 10 recusa net8.0-android/ios/maccatalyst (NETSDK1202, MAUI 8 fora de
+    suporte desde 05/2025). O alvo Windows só entra compilando no Windows (WinUI).
+  -->
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <RootNamespace>Bfocus.Widget.Maui</RootNamespace>
+    <AssemblyName>Bfocus.Widget.Maui</AssemblyName>
+    <PackageId>Bfocus.Widget.Maui</PackageId>
+    <Description>Widget bFocus para .NET MAUI (Android, iOS, Mac Catalyst, Windows): chamados, chat e release notes numa WebView com a ponte nativa de cada plataforma, botão com badge, pílula de versão, banner de ciência e push (registerPushToken/handlePush).</Description>
+    <PackageTags>$(PackageTags);maui;android;ios</PackageTags>
+
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+  </ItemGroup>
+
+  <!-- addWebMessageListener com regra de origem (nunca addJavascriptInterface). 1.14.0.1 usa o AndroidX.Core 1.16 do MAUI 10.0.20 (versões mais novas geram NU1608). -->
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <PackageReference Include="Xamarin.AndroidX.WebKit" Version="1.14.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bfocus.Widget.Core\Bfocus.Widget.Core.csproj" />
+  </ItemGroup>
+
+</Project>

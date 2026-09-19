@@ -1,0 +1,87 @@
+# Publica os 4 pacotes no NuGet ao receber a tag vX.Y.Z no espelho bernisoftware/bfocus-widget-dotnet.
+# Ordem (widgets-native/BRIEF.md §7): testes na menor e na maior versão suportadas → tag = versão → publica.
+name: publish
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      # Os testes de integração pulam sozinhos: o mock-server.mjs mora no monorepo, não no espelho.
+      - name: Testes (net8.0 e net10.0)
+        run: dotnet test tests/Bfocus.Widget.Tests -c Release -p:BfocusTestFrameworks="net8.0%3Bnet10.0"
+
+      - name: Build WinForms e WPF
+        run: |
+          dotnet build src/Bfocus.Widget.WinForms -c Release
+          dotnet build src/Bfocus.Widget.Wpf -c Release
+          dotnet build examples/WinFormsExample -c Release
+          dotnet build examples/WpfExample -c Release
+
+  publish:
+    needs: test
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write # Trusted Publishing (OIDC) do nuget.org
+    env:
+      NUGET_API_KEY_SECRET: ${{ secrets.NUGET_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Tag igual à versão do Directory.Build.props
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}".TrimStart('v')
+          $version = (Select-Xml -Path Directory.Build.props -XPath '//Version').Node.InnerText
+          if ($tag -ne $version) { Write-Error "tag v$tag difere da versão $version"; exit 1 }
+          $code = Select-String -Path src/Bfocus.Widget.Core/Protocol.cs -Pattern "PackageVersion = `"$version`""
+          if (-not $code) { Write-Error "Protocol.PackageVersion difere de $version"; exit 1 }
+
+      - name: Workload MAUI
+        run: dotnet workload install maui
+
+      - name: Pack
+        run: |
+          dotnet pack src/Bfocus.Widget.Core -c Release -o artifacts
+          dotnet pack src/Bfocus.Widget.WinForms -c Release -o artifacts
+          dotnet pack src/Bfocus.Widget.Wpf -c Release -o artifacts
+          dotnet pack src/Bfocus.Widget.Maui -c Release -o artifacts
+
+      # Sem o secret NUGET_API_KEY, publica por Trusted Publishing: o NuGet/login troca o token OIDC
+      # do GitHub por uma chave de 1 h. Política em nuget.org → (perfil) → Trusted Publishing:
+      # owner bernisoftware, repo bfocus-widget-dotnet, workflow publish.yml. NUGET_USER é o nome do
+      # perfil no nuget.org (variável da org — não é segredo).
+      - name: Login no nuget.org (Trusted Publishing)
+        id: nuget-login
+        if: env.NUGET_API_KEY_SECRET == ''
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+
+      - name: Push
+        shell: pwsh
+        env:
+          NUGET_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY || secrets.NUGET_API_KEY }}
+        run: |
+          Get-ChildItem artifacts -Filter *.nupkg | ForEach-Object {
+            dotnet nuget push $_.FullName --api-key "$env:NUGET_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }

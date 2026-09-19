@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Bfocus.Widget.WinForms</RootNamespace>
+    <AssemblyName>Bfocus.Widget.WinForms</AssemblyName>
+    <PackageId>Bfocus.Widget.WinForms</PackageId>
+    <Description>Widget bFocus para Windows Forms: chamados, chat e release notes numa WebView2, com botão flutuante com badge, pílula de versão, banner de ciência, notificação do sistema e modo navegador quando falta o runtime do WebView2.</Description>
+    <PackageTags>$(PackageTags);winforms;windows-forms</PackageTags>
+    <!-- O pacote do WebView2 referencia também o .Wpf.dll (WindowsBase 5.0) num projeto WinForms: conflito inofensivo. -->
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3912.50" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bfocus.Widget.Core\Bfocus.Widget.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Parte do WebView2 comum a WinForms e WPF (sem assembly extra para o integrador). -->
+    <Compile Include="..\Shared\*.cs" Link="Shared\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

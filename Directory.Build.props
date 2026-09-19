@@ -1,0 +1,34 @@
+<Project>
+  <!-- Metadados comuns aos 4 pacotes. A versão daqui é a que o workflow confere contra a tag. -->
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Authors>Berni Software</Authors>
+    <Company>Berni Software</Company>
+    <Product>bFocus Widget</Product>
+    <Copyright>Copyright (c) 2026 Berni Software</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/bernisoftware/bfocus-widget-dotnet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bernisoftware/bfocus-widget-dotnet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>bfocus;widget;support;helpdesk;tickets;release-notes;webview2</PackageTags>
+    <PackageReleaseNotes>https://github.com/bernisoftware/bfocus-widget-dotnet/blob/main/CHANGELOG.md</PackageReleaseNotes>
+
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <!-- Permite compilar os alvos -windows (WinForms/WPF) no macOS/Linux. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Membros públicos sem XML doc não quebram o build (os principais têm). -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' != 'false'">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+</Project>

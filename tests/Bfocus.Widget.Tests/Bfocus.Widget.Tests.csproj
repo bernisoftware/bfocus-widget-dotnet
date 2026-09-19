@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Local: net10.0. CI: -p:BfocusTestFrameworks="net8.0%3Bnet10.0" (menor e maior suportados). -->
+    <BfocusTestFrameworks Condition="'$(BfocusTestFrameworks)' == ''">net10.0</BfocusTestFrameworks>
+    <TargetFrameworks>$(BfocusTestFrameworks)</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>Bfocus.Widget.Tests</RootNamespace>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Bfocus.Widget.Core\Bfocus.Widget.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Cópia gerada por widgets-native/conformance/generate.mjs: nunca editar à mão. -->
+    <None Include="scenarios.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
